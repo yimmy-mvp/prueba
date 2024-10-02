@@ -1,0 +1,22 @@
+/* Estilos básicos */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    text-align: center;
+    padding: 20px;
+    background: #4CAF50;
+    color: white;
+}
+
+#map {
+    height: 600px;
+    width: 100%;
+}
+
+.info-window {
+    font-size: 14px;
+}
