@@ -3,19 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mapa de Ofertas Fitness en San Salvador</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="leaflet.css">
+    <title>Experiencia de Usuario Fitness</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        section {
+            padding: 40px;
+            min-height: 100vh;
+            transition: all 0.5s ease;
+        }
+        .hidden {
+            display: none;
+        }
+        .step {
+            text-align: center;
+            padding: 40px;
+            border-bottom: 1px solid #ccc;
+        }
+        .button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin: 20px 0;
+        }
+        .businesses {
+            margin: 20px;
+        }
+        .business {
+            cursor: pointer;
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin: 10px 0;
+            background-color: #f9f9f9;
+        }
+        #qrCode {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-<header>
-    <h1>Afiliados en tu Region</h1>
-</header>
 
-<div id="map"></div>
+<!-- Paso 1: Ingreso al perfil del usuario -->
+<section id="step1" class="step">
+    <h2>Bienvenido a Urban Fitness</h2>
+    <p>Por favor, ingresa a tu perfil:</p>
+    <input type="text" id="username" placeholder="Nombre de usuario">
+    <input type="password" id="password" placeholder="Contraseña">
+    <button class="button" onclick="nextStep('step2')">Ingresar</button>
+</section>
 
-<!-- Incluir la librería de Leaflet y el archivo JavaScript personalizado -->
-<script src="leaflet.js"></script>
-<script src="map.js"></script>
+<!-- Paso 2: Mostrar los negocios afiliados según la membresía -->
+<section id="step2" class="step hidden">
+    <h2>Selecciona un negocio</h2>
+    <div id="businessList" class="businesses">
+        <!-- Ejemplo de negocios afiliados, esto podría cambiar según el nivel de membresía -->
+        <div class="business" onclick="selectBusiness('CrossFit La Grotta')">CrossFit La Grotta</div>
+        <div class="business" onclick="selectBusiness('Shanti Yoga')">Shanti Yoga</div>
+        <div class="business" onclick="selectBusiness('Pádel Club')">Pádel Club</div>
+    </div>
+</section>
+
+<!-- Paso 3: Mostrar horarios disponibles -->
+<section id="step3" class="step hidden">
+    <h2>Selecciona un horario</h2>
+    <div id="scheduleList" class="businesses"></div>
+</section>
+
+<!-- Paso 4: Confirmación de reserva -->
+<section id="step4" class="step hidden">
+    <h2>Confirmación de Reserva</h2>
+    <p id="confirmationMessage"></p>
+    <button class="button" onclick="confirmReservation()">Confirmar</button>
+</section>
+
+<!-- Paso 5: Mensaje de éxito y generación de código QR -->
+<section id="step5" class="step hidden">
+    <h2>¡Reserva exitosa!</h2>
+    <p id="successMessage"></p>
+    <canvas id="qrCode"></canvas>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+<script>
+    // Función para mover al siguiente paso
+    function nextStep(stepId) {
+        document.querySelectorAll('section').forEach(section => {
+            section.classList.add('hidden');
+        });
+        document.getElementById(stepId).classList.remove('hidden');
+    }
+
+    // Función para seleccionar un negocio
+    function selectBusiness(businessName) {
+        document.getElementById('scheduleList').innerHTML = `
+            <div class="business" onclick="selectSchedule('${businessName}', '8:00 AM')">8:00 AM</div>
+            <div class="business" onclick="selectSchedule('${businessName}', '12:00 PM')">12:00 PM</div>
+            <div class="business" onclick="selectSchedule('${businessName}', '6:00 PM')">6:00 PM</div>
+        `;
+        nextStep('step3');
+    }
+
+    // Función para seleccionar un horario
+    function selectSchedule(businessName, time) {
+        document.getElementById('confirmationMessage').innerText = `¿Confirmar reserva para ${businessName} a las ${time}?`;
+        nextStep('step4');
+    }
+
+    // Función para confirmar la reserva
+    function confirmReservation() {
+        const confirmationText = document.getElementById('confirmationMessage').innerText;
+        document.getElementById('successMessage').innerText = `¡Te has suscrito al curso con éxito! ${confirmationText}`;
+        
+        // Generar el código QR
+        const qr = new QRious({
+            element: document.getElementById('qrCode'),
+            value: confirmationText,
+            size: 200
+        });
+
+        nextStep('step5');
+    }
+</script>
+
 </body>
 </html>
